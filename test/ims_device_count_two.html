@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="echarts.min.js"></script>
+    <script>
+        function loadData() {
+
+            var data = window.JAVADATA.getData();//执行java中的方法拿取data。
+
+            var obj = JSON.parse(data);//解析json数据成对象
+            //拿到数据后更新Option
+            myChart.setOption({
+                series: [{
+                    name: '工单数量',
+                    data: [1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 12]
+                    //data: [Number(obj.opjson[0].jobcount), Number(obj.opjson[1].jobcount), Number(obj.opjson[2].jobcount), Number(obj.opjson[3].jobcount), Number(obj.opjson[4].jobcount), Number(obj.opjson[5].jobcount), Number(obj.opjson[6].jobcount), Number(obj.opjson[7].jobcount), Number(obj.opjson[8].jobcount), Number(obj.opjson[9].jobcount), Number(obj.opjson[10].jobcount), Number(obj.opjson[11].jobcount)]
+                }]
+            });
+        }
+    </script>
+</head>
+<body onload="loadData()">
+
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width:100%"></div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    // var myChart = echarts.init(document.getElementById('main'));
+    var myChart = document.getElementById('main');//拿到布局
+    //自适应宽高
+    var myChartContainer = function () {
+        myChart.style.width = window.innerWidth+'px';//等于该例显示浏览器窗口的高度和宽度：（不包括工具栏/滚动条）
+        myChart.style.height = window.innerHeight+'px';
+    };
+
+    myChartContainer();//通过变量名调用匿名函数。
+    var myChart = echarts.init(myChart);
+
+
+    // 指定图表的配置项和数据
+    option = {
+        color: ['#3398DB'],
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        grid: {
+            top: '10%',//图表距离顶部10%，不加的话如果设置图所在容器的宽高和浏览器窗口的内部宽度、高度一致的话，上下显示不完整。
+            left: '0%',
+            right: '0%',
+            bottom: '10%',
+            containLabel: true//containLabel 为 true 的时候：grid.left grid.right grid.top grid.bottom grid.width grid.height 决定的是包括了坐标轴标签在内的所有内容所形成的矩形的位置。
+        },
+        xAxis : [
+            {
+                type : 'category',
+                data : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                axisTick: {
+                    alignWithLabel: true
+                }
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:'直接访问',
+                type:'bar',
+                barWidth: '60%',
+                data:[10, 52, 200, 334, 390, 330, 220]
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+
+
+</script>
+</body>
+</html>

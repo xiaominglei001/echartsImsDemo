@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="echarts.min.js"></script>
+    <script>
+        function loadData() {
+
+            var data = window.JAVADATA.getData();//执行java中的方法拿取data。
+
+            var obj = JSON.parse(data);//解析json数据成对象
+            //拿到数据后更新Option
+            myChart.setOption({
+                series: [{
+                    name: '工单数量',
+                    data: [1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 12]
+                    //data: [Number(obj.opjson[0].jobcount), Number(obj.opjson[1].jobcount), Number(obj.opjson[2].jobcount), Number(obj.opjson[3].jobcount), Number(obj.opjson[4].jobcount), Number(obj.opjson[5].jobcount), Number(obj.opjson[6].jobcount), Number(obj.opjson[7].jobcount), Number(obj.opjson[8].jobcount), Number(obj.opjson[9].jobcount), Number(obj.opjson[10].jobcount), Number(obj.opjson[11].jobcount)]
+                }]
+            });
+        }
+    </script>
+</head>
+<body onload="loadData()">
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width:100%"></div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    // var myChart = echarts.init(document.getElementById('main'));
+    var myChart = document.getElementById('main');//拿到布局
+    //自适应宽高
+    var myChartContainer = function () {
+        myChart.style.width = window.innerWidth+'px';//等于该例显示浏览器窗口的高度和宽度：（不包括工具栏/滚动条）
+        myChart.style.height = window.innerHeight+'px';
+    };
+    myChartContainer();//通过变量名调用匿名函数。
+    var myChart = echarts.init(myChart);
+
+
+
+    function randomData() {
+        now = new Date(+now + oneDay);
+        value = value + Math.random() * 21 - 10;
+
+        return {
+            name: now.toString(),
+            value: [
+                [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+                Math.round(value)
+            ]
+        }
+    }
+    var data = [];
+    var now = +new Date(2016, 4, 19);
+    var oneDay = 24 * 3600 * 1000;
+    var value = Math.random() * 100;
+    for (var i = 0; i < 100; i++) {
+        data.push(randomData());
+    }
+
+
+    // 指定图表的配置项和数据
+    var option = {
+        tooltip: {//提示框组件
+            trigger: 'axis',//触发类型。坐标轴触发，主要在柱状图，折线图等会使用类目轴的图表中使用。
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        grid: {
+            top: '10%',//图表距离顶部10%，不加的话如果设置图所在容器的宽高和浏览器窗口的内部宽度、高度一致的话，上下显示不完整。
+            left: '0%',
+            right: '0%',
+            bottom: '10%',
+            containLabel: true//containLabel 为 true 的时候：grid.left grid.right grid.top grid.bottom grid.width grid.height 决定的是包括了坐标轴标签在内的所有内容所形成的矩形的位置。
+        },
+        xAxis: [
+            {
+                type: 'time',//x轴数据类型
+                axisTick: {
+                    alignWithLabel: true //类目轴中在 boundaryGap 为 true (默认为true,标签在中间)的时候有效，可以保证刻度线和标签对齐。设置这个值相当于抵消了boundaryGap为true。这常用于『防止标签溢出』的场景...
+                },
+                splitLine: {
+                    show: false//是否显示分隔线。默认数值轴显示，类目轴不显示。false不显示。
+                }
+
+            }
+        ],
+        yAxis: [
+            {
+
+                type: 'value',
+                axisLine: {
+                    onZero: false,//X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效。
+                    show: false//是否显示轴线
+                },
+                axisLabel: {
+                    formatter: '{value} K'//Y轴单位
+                },
+
+                splitLine: {
+                    show: true//是否显示分隔线。默认数值轴显示，类目轴不显示。
+                },
+                boundaryGap: ['0%', '10%']//类目轴中 boundaryGap 可以配置为 true 和 false,默认为 true，这时候刻度只是作为分隔线，标签和数据点都会在两个刻度之间的带(band)中间。非类目轴，包括时间，数值，对数轴，boundaryGap是一个两个值的数组，分别表示数据最小值和最大值的延伸范围，可以直接设置数值或者相对的百分比，在设置 min 和 max 后无效。
+
+            }
+        ],
+        series: [
+            {
+                showSymbol: false,//显示指示器，如圆点。
+                name: '能耗',
+                type: 'line',
+                itemStyle : {
+                    normal : {
+                        color:'#0A69B2',//折线折点颜色
+                        lineStyle:{
+                            color:'#0A69B2'//折线颜色
+                        }
+                    }
+                },
+                data: data
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+
+
+
+    setInterval(function () {
+
+        for (var i = 0; i < 5; i++) {
+            data.shift();//shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值。
+            data.push(randomData());//push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度。
+        }
+
+        myChart.setOption({
+            series: [{
+                data: data
+            }]
+        });
+    }, 1000);
+
+
+
+</script>
+</body>
+</html>
